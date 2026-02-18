@@ -12,6 +12,38 @@
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import {
+  CallToolResultSchema,
+  GetPromptResultSchema,
+  ListPromptsResultSchema,
+  ListResourcesResultSchema,
+  ListToolsResultSchema,
+  ReadResourceResultSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+
+function getFirstTextContent(content: unknown[]): string {
+  const textItem = content.find((item) => {
+    if (!item || typeof item !== 'object') return false;
+
+    const maybeContent = item as { type?: unknown; text?: unknown };
+    return maybeContent.type === 'text' && typeof maybeContent.text === 'string';
+  }) as { text?: string } | undefined;
+
+  return textItem?.text ?? '';
+}
+
+function getFirstResourceTextContent(
+  contents: unknown[]
+): string {
+  const textItem = contents.find((item) => {
+    if (!item || typeof item !== 'object') return false;
+
+    const maybeContent = item as { text?: unknown };
+    return typeof maybeContent.text === 'string';
+  }) as { text?: string } | undefined;
+
+  return textItem?.text ?? '';
+}
 
 class NotesClient {
   private client: Client;
@@ -50,10 +82,7 @@ class NotesClient {
   async listTools() {
     console.log('📋 Listing available tools:\n');
 
-    const response = await this.client.request(
-      { method: 'tools/list' },
-      { method: 'tools/list', params: {} }
-    );
+    const response = await this.client.request({ method: 'tools/list' }, ListToolsResultSchema);
 
     console.log('Available tools:');
     response.tools.forEach((tool: any) => {
@@ -69,18 +98,18 @@ class NotesClient {
   async createNote(title: string, content: string, tags: string[] = []) {
     console.log(`📝 Creating note: "${title}"\n`);
 
-    const response = await this.client.request(
-      { method: 'tools/call' },
+    const createResponse = await this.client.request(
       {
         method: 'tools/call',
         params: {
           name: 'create_note',
           arguments: { title, content, tags },
         },
-      }
+      },
+      CallToolResultSchema
     );
 
-    console.log('Response:', response.content[0].text);
+    console.log('Response:', getFirstTextContent(createResponse.content));
     console.log();
   }
 
@@ -91,17 +120,18 @@ class NotesClient {
     console.log(tag ? `📚 Listing notes tagged "${tag}":\n` : '📚 Listing all notes:\n');
 
     const response = await this.client.request(
-      { method: 'tools/call' },
       {
         method: 'tools/call',
         params: {
           name: 'list_notes',
           arguments: tag ? { tag } : {},
         },
-      }
+      },
+      CallToolResultSchema
     );
 
-    const notes = JSON.parse(response.content[0].text);
+    const notesJson = getFirstTextContent(response.content);
+    const notes = JSON.parse(notesJson || '[]');
     if (notes.length === 0) {
       console.log('No notes found.\n');
     } else {
@@ -121,17 +151,18 @@ class NotesClient {
     console.log(`🔍 Searching for: "${query}"\n`);
 
     const response = await this.client.request(
-      { method: 'tools/call' },
       {
         method: 'tools/call',
         params: {
           name: 'search_notes',
           arguments: { query },
         },
-      }
+      },
+      CallToolResultSchema
     );
 
-    const notes = JSON.parse(response.content[0].text);
+    const notesJson = getFirstTextContent(response.content);
+    const notes = JSON.parse(notesJson || '[]');
     if (notes.length === 0) {
       console.log('No matching notes found.\n');
     } else {
@@ -152,7 +183,7 @@ class NotesClient {
 
     const response = await this.client.request(
       { method: 'resources/list' },
-      { method: 'resources/list', params: {} }
+      ListResourcesResultSchema
     );
 
     console.log('Available resources:');
@@ -170,15 +201,15 @@ class NotesClient {
     console.log(`📖 Reading resource: ${uri}\n`);
 
     const response = await this.client.request(
-      { method: 'resources/read' },
       {
         method: 'resources/read',
         params: { uri },
-      }
+      },
+      ReadResourceResultSchema
     );
 
     console.log('Content:');
-    console.log(response.contents[0].text);
+    console.log(getFirstResourceTextContent(response.contents));
     console.log();
   }
 
@@ -190,7 +221,7 @@ class NotesClient {
 
     const response = await this.client.request(
       { method: 'prompts/list' },
-      { method: 'prompts/list', params: {} }
+      ListPromptsResultSchema
     );
 
     console.log('Available prompts:');
@@ -211,11 +242,11 @@ class NotesClient {
     console.log(`💬 Getting prompt: ${name}\n`);
 
     const response = await this.client.request(
-      { method: 'prompts/get' },
       {
         method: 'prompts/get',
         params: { name, arguments: args },
-      }
+      },
+      GetPromptResultSchema
     );
 
     console.log('Prompt messages:');
