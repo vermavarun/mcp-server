@@ -11,7 +11,8 @@
     "build": "tsc",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "dev": "tsc && node build/index.js"
+    "dev": "tsc && node build/index.js",
+    "inspect": "npm run build && npx -y @modelcontextprotocol/inspector node build/index.js"
   },
   "keywords": [
     "mcp",

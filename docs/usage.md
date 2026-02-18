@@ -43,6 +43,26 @@ Edit your Claude Desktop configuration file:
 
 See [examples/client-example.ts](../examples/client-example.ts) for a sample implementation.
 
+### 4. Run in Inspect Mode (Browser UI)
+
+Use MCP Inspector to run the server in introspect/inspect mode with a browser UI:
+
+```bash
+npm run inspect
+```
+
+What this does:
+- Builds the server
+- Starts MCP Inspector with your server command: `node build/index.js`
+- Exposes a local UI (usually `http://127.0.0.1:6274`)
+
+When Inspector starts, it prints:
+- Proxy address (for example `127.0.0.1:6277`)
+- A session auth token
+- A URL with the token prefilled
+
+Keep the terminal running while using the Inspector in your browser.
+
 ## 📝 Using Tools
 
 ### Create a Note

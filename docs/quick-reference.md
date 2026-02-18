@@ -16,6 +16,9 @@ npm run watch
 
 # Run directly
 npm run dev
+
+# Run in inspect mode (browser UI)
+npm run inspect
 ```
 
 ## 📋 JSON-RPC Methods
@@ -377,6 +380,7 @@ echo '{"jsonrpc":"2.0","method":"resources/read","params":{"uri":"notes://summar
 - [Core Concepts](./concepts.md)
 - [Architecture](./architecture.md)
 - [Usage Examples](./usage.md)
+- [Inspect Mode (Browser UI)](./usage.md#4-run-in-inspect-mode-browser-ui)
 - [MCP Specification](https://spec.modelcontextprotocol.io)
 
 ## 💡 Tips

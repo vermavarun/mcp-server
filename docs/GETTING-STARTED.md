@@ -47,6 +47,7 @@ This project contains comprehensive learning materials organized as follows:
   - Step-by-step examples
   - Common patterns
   - Troubleshooting
+  - [Run in Inspect Mode (Browser UI)](usage.md#4-run-in-inspect-mode-browser-ui)
 
 ### 6. Quick Reference
 - **[docs/quick-reference.md](quick-reference.md)** - Cheat sheet

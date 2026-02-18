@@ -132,6 +132,26 @@ npm run watch
 ### Testing
 The server communicates via stdio, so direct testing requires an MCP client. See [examples/](examples/) for a sample client implementation.
 
+### Inspect Mode (Browser UI)
+
+Use MCP Inspector to run the server in introspect/inspect mode with a web UI:
+
+```bash
+npm run inspect
+```
+
+What this does:
+- Builds the server
+- Starts MCP Inspector with your server command: `node build/index.js`
+- Opens a local UI (usually `http://127.0.0.1:6274`)
+
+When Inspector starts, it prints:
+- Proxy address (for example `127.0.0.1:6277`)
+- A session auth token
+- A URL with the token prefilled
+
+Keep the terminal running while you use the Inspector UI in your browser.
+
 ## 📚 Additional Resources
 
 - [MCP Official Documentation](https://modelcontextprotocol.io)
